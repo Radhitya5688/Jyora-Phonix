@@ -1,0 +1,264 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Suggest Me | Jyora Phonix{% endblock %}
+
+{% block content %}
+<section class="processor-lab-page">
+    <div class="page-heading">
+        <p class="eyebrow">JYORA PHONIX / SMART DISCOVERY</p>
+        <h1>Find your next phone.</h1>
+        <p class="page-description">
+            Tell us your budget and what matters most.
+            We'll shortlist phones using the data currently available.
+        </p>
+    </div>
+
+    <form method="post" class="processor-card">
+        {% csrf_token %}
+
+        <div class="suggest-form-field">
+            <label for="budget">Your budget (₹)</label>
+            <input
+                id="budget"
+                name="budget"
+                type="number"
+                min="1"
+                step="1"
+                placeholder="e.g. 25000"
+                value="{{ budget }}"
+                required
+            >
+        </div>
+
+        <div class="suggest-form-field">
+            <label for="priority">Your main priority</label>
+            <select id="priority" name="priority">
+                {% for value, label in priorities %}
+                    <option
+                        value="{{ value }}"
+                        {% if selected_priority == value %}selected{% endif %}
+                    >
+                        {{ label }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="suggest-submit">
+            Find my phones
+        </button>
+    </form>
+
+    {% if error %}
+        <p class="suggest-message">{{ error }}</p>
+    {% endif %}
+
+    {% if recommendations %}
+
+        {% if selected_priority == "performance" %}
+            <div class="suggest-message">
+                <strong>Gaming &amp; Performance</strong>
+                <p>
+                    Phones with recorded gaming FPS tests are prioritized,
+                    followed by processor information.
+                </p>
+                <p>
+                    FPS results are specific to the recorded game, settings,
+                    and test conditions. Phones without comparable tests
+                    cannot be reliably ranked by gaming performance.
+                </p>
+            </div>
+        {% elif selected_priority == "battery" %}
+            <div class="suggest-message">
+                <strong>Battery priority</strong>
+                <p>
+                    Results prioritize recorded battery capacity and charging
+                    wattage. Capacity alone does not establish real-world
+                    battery life.
+                </p>
+            </div>
+        {% elif selected_priority == "camera" %}
+            <div class="suggest-message">
+                <strong>Camera priority</strong>
+                <p>
+                    Results prioritize recorded rear and front camera
+                    specifications. This is not a measured camera-quality
+                    ranking.
+                </p>
+            </div>
+        {% elif selected_priority == "display" %}
+            <div class="suggest-message">
+                <strong>Display priority</strong>
+                <p>
+                    Results prioritize recorded refresh rate and display
+                    specifications. Missing specifications are not assumed.
+                </p>
+            </div>
+        {% else %}
+            <div class="suggest-message">
+                <strong>Balanced recommendations</strong>
+                <p>
+                    Results prioritize specification coverage, followed by
+                    the lowest recorded launch-price reference.
+                </p>
+            </div>
+        {% endif %}
+
+        <div class="processor-grid">
+            {% for phone in recommendations %}
+                <article class="processor-card">
+                    {% if phone.image_url %}
+                        <img
+                            src="{{ phone.image_url }}"
+                            alt="{{ phone.brand }} {{ phone.name }}"
+                            class="suggest-phone-image"
+                            loading="lazy"
+                        >
+                    {% endif %}
+
+                    <p class="processor-manufacturer">{{ phone.brand }}</p>
+                    <h2>{{ phone.name }}</h2>
+
+                    <p class="suggest-price">
+                        ₹{{ phone.price|floatformat:0 }}
+                    </p>
+
+                    <div class="processor-details">
+                        <div>
+                            <span>Processor</span>
+                            <strong>{{ phone.processor }}</strong>
+                        </div>
+
+                        <div>
+                            <span>CPU details</span>
+                            <strong>
+                                {% if phone.cpu_details %}
+                                    {{ phone.cpu_details }}
+                                {% else %}
+                                    Not recorded
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>GPU</span>
+                            <strong>
+                                {% if phone.gpu_name %}
+                                    {{ phone.gpu_name }}
+                                {% else %}
+                                    Not recorded
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Architecture</span>
+                            <strong>
+                                {% if phone.architecture %}
+                                    {{ phone.architecture }}
+                                {% else %}
+                                    Not recorded
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Display</span>
+                            <strong>
+                                {% if phone.display %}
+                                    {{ phone.display }} inches
+                                {% else %}
+                                    Not recorded
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Refresh rate</span>
+                            <strong>
+                                {% if phone.refresh_rate %}
+                                    {{ phone.refresh_rate }} Hz
+                                {% else %}
+                                    Not recorded
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Battery</span>
+                            <strong>
+                                {% if phone.battery %}
+                                    {{ phone.battery }} mAh
+                                {% else %}
+                                    Not recorded
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+
+                    {% if selected_priority == "performance" %}
+                        <div class="processor-details gaming-test-details">
+                            <div>
+                                <span>Gaming test evidence</span>
+
+                                {% if phone.gaming_test %}
+                                    <strong>
+                                        {{ phone.gaming_test.game_name }}
+                                    </strong>
+
+                                    <p>
+                                        {{ phone.gaming_test.average_fps }} FPS
+                                        average
+                                    </p>
+
+                                    {% if phone.gaming_test.tested_at %}
+                                        <p>
+                                            Tested:
+                                            {{ phone.gaming_test.tested_at|date:"d M Y" }}
+                                        </p>
+                                    {% endif %}
+
+                                    {% if phone.gaming_test.source_name %}
+                                        <p>
+                                            Source:
+                                            {% if phone.gaming_test.source_url %}
+                                                <a
+                                                    href="{{ phone.gaming_test.source_url }}"
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                >
+                                                    {{ phone.gaming_test.source_name }}
+                                                </a>
+                                            {% else %}
+                                                {{ phone.gaming_test.source_name }}
+                                            {% endif %}
+                                        </p>
+                                    {% endif %}
+
+                                    {% if phone.gaming_test.test_conditions %}
+                                        <p>
+                                            {{ phone.gaming_test.test_conditions }}
+                                        </p>
+                                    {% endif %}
+                                {% else %}
+                                    <p>
+                                        No sourced gaming FPS test recorded
+                                        for this phone yet.
+                                    </p>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <p class="suggest-price-note">
+                        Launch-price reference, not a verified current
+                        selling price.
+                    </p>
+                </article>
+            {% endfor %}
+        </div>
+    {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,5 @@
+{% extends "base.html" %}
+{% block title %}{{ page_name }} | Jyora Phonix{% endblock %}
+{% block content %}
+<section class="page-hero"><div class="container"><span class="eyebrow">JYORA PHONIX</span><h1>{{ page_name }}</h1><p>{{ description }}</p><div class="coming-soon"><span class="coming-icon">✳</span><div><b>This section is planned.</b><p>We're building the verified catalogue and comparison logic before presenting live results.</p></div></div><a class="button button-primary" href="{% url 'buy' %}">Start with your budget →</a></div></section>
+{% endblock %}

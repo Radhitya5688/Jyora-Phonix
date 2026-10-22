@@ -1,0 +1,269 @@
+```django
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Buy smarter | Jyora Phonix{% endblock %}
+
+{% block content %}
+<section class="page-hero compact-hero">
+  <div class="container">
+    <span class="eyebrow">YOUR BUDGET, YOUR RULES</span>
+    <h1>Find the phone that <span>fits your life.</span></h1>
+    <p>Start with a budget. Explore phone specifications and compare your options.</p>
+  </div>
+</section>
+
+<section class="container buy-workspace">
+  <form method="post" action="{% url 'buy' %}" class="budget-panel" id="buy-form">
+    {% csrf_token %}
+
+    <div class="budget-panel-top">
+      <div>
+        <span class="step-label">STEP 01</span>
+        <h2>Set your budget</h2>
+        <p>How much do you want to spend?</p>
+      </div>
+      <span class="rupee-mark">₹</span>
+    </div>
+
+    <label class="field-label" for="budget">Maximum budget (INR)</label>
+    <div class="large-input">
+      <span>₹</span>
+      <input id="budget" name="budget" type="number" min="1" step="1"
+             placeholder="30000" value="{{ budget }}" required>
+    </div>
+
+    {% if error %}
+      <p class="form-error">{{ error }}</p>
+    {% endif %}
+
+    <div class="optional-heading">
+      <span class="step-label">STEP 02 · OPTIONAL</span>
+      <span>Explore eligible offers</span>
+    </div>
+
+    <label class="option-row">
+      <input type="checkbox" name="use_bank_offers"
+             {% if bank_selected %}checked{% endif %}>
+      <span class="option-symbol">▤</span>
+      <span class="option-copy">
+        <b>Include bank discounts</b>
+        <small>Check whether your selected card qualifies.</small>
+      </span>
+    </label>
+
+    <label class="option-row">
+      <input type="checkbox" name="use_exchange"
+             {% if exchange_selected %}checked{% endif %}>
+      <span class="option-symbol">↻</span>
+      <span class="option-copy">
+        <b>I'm exchanging a phone</b>
+        <small>Exchange value depends on model and condition.</small>
+      </span>
+    </label>
+
+    <div class="offer-extra" id="offer-extra"
+         {% if not bank_selected and not exchange_selected %}hidden{% endif %}>
+      <p class="helper-text">
+        Bank eligibility and exchange valuations are not connected yet.
+        No unverified discounts will be deducted.
+      </p>
+
+      <div class="field-group" id="bank-fields"
+           {% if not bank_selected %}hidden{% endif %}>
+        <label class="field-label" for="bank-card">Bank/card</label>
+        <select id="bank-card" name="bank_card">
+          <option value="">Choose later</option>
+          <option>HDFC Bank</option>
+          <option>ICICI Bank</option>
+          <option>Axis Bank</option>
+          <option>SBI</option>
+          <option>Other / not sure</option>
+        </select>
+      </div>
+
+      <div class="field-group" id="exchange-fields"
+           {% if not exchange_selected %}hidden{% endif %}>
+        <label class="field-label" for="old-phone">Your current phone</label>
+        <input id="old-phone" name="old_phone" type="text"
+               placeholder="e.g. brand and model">
+
+        <label class="field-label" for="phone-condition">Condition</label>
+        <select id="phone-condition" name="phone_condition">
+          <option value="">Select condition</option>
+          <option>Excellent</option>
+          <option>Good</option>
+          <option>Fair</option>
+          <option>Damaged</option>
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="button button-primary button-full">
+      Show matching phones <span>→</span>
+    </button>
+
+    <p class="fine-print">
+      Launch prices are not current selling prices. Bank and exchange
+      savings are not included until verified offer data is available.
+    </p>
+  </form>
+
+  <section class="results-panel" aria-live="polite">
+    <div class="results-heading">
+      <div>
+        <span class="step-label">YOUR MATCHES</span>
+        <h2>
+          {% if submitted %}
+            Results for your budget
+          {% else %}
+            Your shortlist starts here
+          {% endif %}
+        </h2>
+        <p>
+          {% if submitted and budget_value %}
+            Budget: ₹{{ budget_value|floatformat:0 }}
+          {% else %}
+            Set your budget to explore the catalogue.
+          {% endif %}
+        </p>
+      </div>
+
+      <span class="result-count">
+        {% if submitted %}
+          {{ phones|length }} matching phones
+        {% else %}
+          Ready to explore
+        {% endif %}
+      </span>
+    </div>
+
+    {% if offer_note %}
+      <div class="notice-box">
+        <b>Offer eligibility note</b>
+        <p>{{ offer_note }}</p>
+      </div>
+    {% endif %}
+
+    {% if price_note and submitted %}
+      <div class="notice-box">
+        <b>About these prices</b>
+        <p>{{ price_note }}</p>
+      </div>
+    {% endif %}
+
+    {% if submitted and phones %}
+      <div class="results-toolbar">
+        <span>Sorted by launch-price reference</span>
+        <span class="demo-label">CATALOGUE</span>
+      </div>
+
+      <div class="phone-results">
+        {% for phone in phones %}
+          <article class="phone-result-card">
+
+            <div class="phone-thumbnail"
+     style="width:74px; min-width:74px; height:106px;
+            overflow:hidden; position:relative;
+            display:flex; align-items:center;
+            justify-content:center; flex-shrink:0;
+            box-sizing:border-box;">
+
+  {% if phone.brand == "Samsung" and phone.name == "Galaxy S25" %}
+    <img
+      src="{% static 'images/s25.png' %}"
+      alt="Samsung Galaxy S25"
+      style="display:block; width:100%; height:100%;
+             max-width:100%; max-height:100%;
+             object-fit:contain; padding:4px;
+             box-sizing:border-box; position:static;"
+    >
+  {% elif phone.image_url %}
+    <img
+      src="{{ phone.image_url }}"
+      alt="{{ phone.brand }} {{ phone.name }}"
+      style="display:block; width:100%; height:100%;
+             max-width:100%; max-height:100%;
+             object-fit:contain; padding:4px;
+             box-sizing:border-box; position:static;"
+    >
+  {% else %}
+    <div class="mini-phone"></div>
+  {% endif %}
+
+</div>
+
+            <div class="phone-result-info">
+              <span class="demo-label">DATABASE LISTING</span>
+              <h3>{{ phone.name }}</h3>
+              <p>{{ phone.brand }} · {{ phone.description }}</p>
+
+              <div class="spec-chip-row">
+                {% for spec in phone.specs %}
+                  <span>{{ spec }}</span>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="phone-result-price">
+              <span>{{ phone.price_label|default:"Launch-price reference" }}</span>
+              <b>₹{{ phone.price|floatformat:0 }}</b>
+              <span class="price-muted">Current offer not verified</span>
+              <a href="{% url 'compare' %}" class="text-link">Compare →</a>
+            </div>
+
+          </article>
+        {% endfor %}
+      </div>
+
+    {% elif submitted %}
+      <div class="empty-state">
+        <div class="empty-icon">⌕</div>
+        <h3>No matching phones found</h3>
+        <p>
+          No phones with a recorded launch-price reference matched this
+          budget and brand selection. Try increasing your budget or
+          selecting more brands.
+        </p>
+        <a class="button button-secondary" href="{% url 'suggest' %}">
+          Try Suggest Me a Phone
+        </a>
+      </div>
+
+    {% else %}
+      <div class="empty-state">
+        <div class="empty-illustration">
+          <div class="mini-phone mini-phone-large"></div>
+          <span>₹</span>
+        </div>
+        <h3>Let's find your next phone.</h3>
+        <p>
+          Enter your budget to explore the phones in our current catalogue.
+          Compare specifications and use the source information to evaluate
+          your options.
+        </p>
+        <a class="text-link" href="{% url 'suggest_me' %}">
+          Want help deciding? Suggest me a phone →
+        </a>
+      </div>
+    {% endif %}
+
+    <div class="filter-preview">
+      <div class="filter-preview-heading">
+        <h3>Fine-tune your search</h3>
+        <span>More filters coming soon</span>
+      </div>
+      <div class="filter-tags">
+        <span>Brand</span>
+        <span>Performance</span>
+        <span>Camera</span>
+        <span>Battery</span>
+        <span>RAM &amp; storage</span>
+        <span>Display</span>
+        <span>5G &amp; IP rating</span>
+      </div>
+    </div>
+  </section>
+</section>
+{% endblock %}
+```

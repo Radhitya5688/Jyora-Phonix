@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Jyora Phonix | Know more. Spend smarter.{% endblock %}
+{% block content %}
+<section class="hero-section">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <span class="eyebrow"><span class="pulse-dot"></span> SMARTPHONE INTELLIGENCE, REIMAGINED</span>
+      <h1>Your next phone deserves a <span>smarter search.</span></h1>
+      <p class="hero-lead">Discover phones, compare the hardware that matters, and uncover deals that fit your real budget.</p>
+      <form class="hero-budget" action="{% url 'buy' %}" method="get">
+        <label for="hero-budget">What's your budget?</label>
+        <div class="budget-entry"><span>₹</span><input id="hero-budget" name="budget" type="number" min="1" step="1" placeholder="e.g. 30000" required><button type="submit" class="button button-primary">Find my phone <span aria-hidden="true">↗</span></button></div>
+      </form>
+      <a class="text-link" href="{% url 'suggest_me' %}">Not sure what you need? <b>Suggest me a phone →</b></a>
+    </div>
+    <div class="hero-art" aria-label="Decorative smartphone illustration">
+      <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+      <div class="phone-back"><div class="camera-row"><i></i><i></i><i></i></div><div class="phone-logo">P</div></div>
+      <div class="phone-front"><div class="phone-island"></div><div class="screen-glow"></div><div class="screen-label">PHONIX<span>Find your edge.</span></div></div>
+      <div class="floating-chip chip-performance"><span class="chip-icon">↗</span><span><b>Know the specs</b><small>Beyond the numbers</small></span></div>
+      <div class="floating-chip chip-price"><span class="chip-icon">₹</span><span><b>Find real value</b><small>Offers that fit you</small></span></div>
+    </div>
+  </div>
+</section>
+
+<section class="trust-strip"><div class="container trust-items"><span><i>✓</i> Compare 3+ phones</span><span><i>✓</i> Understand processors</span><span><i>✓</i> Explore eligible offers</span><span><i>✓</i> Buy from trusted retailers</span></div></section>
+
+<section class="section container">
+  <div class="section-heading"><div><span class="eyebrow">YOUR NEXT FAVOURITE</span><h2>Find your kind of phone.</h2><p>Start with what matters most to you.</p></div></div>
+  <div class="feature-grid">
+    <a class="feature-card feature-dark" href="{% url 'buy' %}"><span class="feature-icon">₹</span><span class="feature-kicker">SMART BUYING</span><h3>Find the deal, not just the price.</h3><p>Explore phones that may fit your budget after eligible offers.</p><span class="card-arrow">Explore phones ↗</span></a>
+    <a class="feature-card" href="{% url 'compare' %}"><span class="feature-icon">⇄</span><span class="feature-kicker">SIDE BY SIDE</span><h3>Three phones. One clear decision.</h3><p>Compare specs and trade-offs without hopping between tabs.</p><span class="card-arrow">Compare phones ↗</span></a>
+    <a class="feature-card" href="{% url 'processor_lab' %}"><span class="feature-icon">⌘</span><span class="feature-kicker">UNDER THE HOOD</span><h3>Go deeper than the chipset name.</h3><p>Explore benchmarks, thermals and sustained performance.</p><span class="card-arrow">Enter Processor Lab ↗</span></a>
+  </div>
+</section>
+
+<section class="section section-muted">
+  <div class="container">
+    <div class="section-heading section-heading-row"><div><span class="eyebrow">FRESH OFF THE LAUNCH STAGE</span><h2>Latest launches</h2><p>New releases will appear here once launch data is verified.</p></div><a class="text-link" href="{% url 'buy' %}">Explore phones →</a></div>
+    <div class="launch-placeholder-grid">
+      <article class="launch-placeholder"><div class="placeholder-device device-one"></div><span class="status-pill">Catalogue in progress</span><h3>New launches, clearly explained.</h3><p>Verified Indian launch dates, specs and prices will live here.</p></article>
+      <article class="launch-placeholder"><div class="placeholder-device device-two"></div><span class="status-pill">Compare the details</span><h3>Know what changed.</h3><p>Explore hardware differences instead of just reading a spec sheet.</p></article>
+      <article class="launch-placeholder"><div class="placeholder-device device-three"></div><span class="status-pill">Find your match</span><h3>Make the launch worth it.</h3><p>Check whether a new phone fits your needs and budget.</p></article>
+    </div>
+  </div>
+</section>
+
+<section class="section container">
+  <div class="about-band"><div><span class="eyebrow">WHY PHONIX?</span><h2>Not another store.<br><span>A smarter way to choose.</span></h2><p>Jyora Phonix brings effective-price discovery, deeper hardware comparisons and personal priorities into one buying journey.</p><a class="button button-light" href="{% url 'about' %}">Discover our difference ↗</a></div><div class="about-stat-grid"><div><b>01</b><span>Real-budget discovery</span></div><div><b>02</b><span>Processor intelligence</span></div><div><b>03</b><span>Recommendations with reasons</span></div><div><b>04</b><span>Source-aware information</span></div></div></div>
+</section>
+{% endblock %}

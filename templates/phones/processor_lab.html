@@ -1,0 +1,81 @@
+```html
+{% extends "base.html" %}
+
+{% block title %}Processor Lab | Jyora Phonix{% endblock %}
+
+{% block content %}
+<section class="processor-lab-page">
+    <div class="page-heading">
+        <p class="eyebrow">JYORA PHONIX / PERFORMANCE</p>
+        <h1>Processor Lab</h1>
+        <p class="page-description">
+            Explore the chipsets behind your favourite phones.
+            Compare processor specifications and understand the hardware
+            powering everyday performance.
+        </p>
+    </div>
+
+    {% if processors %}
+        <div class="processor-grid">
+            {% for processor in processors %}
+                <article class="processor-card">
+                    <p class="processor-manufacturer">
+                        {{ processor.manufacturer|default:"Manufacturer not recorded" }}
+                    </p>
+
+                    <h2>{{ processor.name }}</h2>
+
+                    <div class="processor-details">
+                        <div>
+                            <span>CPU details</span>
+                            <strong>
+                                {{ processor.cpu_details|default:"Not recorded" }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>GPU</span>
+                            <strong>
+                                {{ processor.gpu_name|default:"Not recorded" }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Architecture</span>
+                            <strong>
+                                {{ processor.architecture|default:"Not recorded" }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>Fabrication</span>
+                            <strong>
+                                {% if processor.fabrication_nm %}
+                                    {{ processor.fabrication_nm }} nm
+                                {% else %}
+                                    Not recorded
+                                {% endif %}
+                            </strong>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="processor-empty">
+            <h2>Your lab is waiting for its first chip.</h2>
+            <p>
+                Processor records will appear here after you add them
+                through the Django admin panel.
+            </p>
+            <a href="/admin/">Open Admin Panel</a>
+        </div>
+    {% endif %}
+
+    <p class="processor-disclaimer">
+        Specifications are shown only when recorded in the database.
+        CPU specifications alone do not determine real-world performance.
+    </p>
+</section>
+{% endblock %}
+```

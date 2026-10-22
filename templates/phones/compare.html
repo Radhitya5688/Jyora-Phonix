@@ -1,0 +1,102 @@
+
+{% extends "base.html" %}
+
+{% block title %}Compare Phones | Jyora Phonix{% endblock %}
+
+{% block content %}
+<section class="page-hero compact-hero">
+  <div class="container">
+    <span class="eyebrow">COMPARE BEFORE YOU BUY</span>
+    <h1>Three phones. <span>One smarter choice.</span></h1>
+    <p>Compare specifications side by side using the data in our catalogue.</p>
+  </div>
+</section>
+
+<section class="container compare-page">
+
+  <form method="get" action="{% url 'compare' %}" class="compare-selector">
+    <h2>Select at least 3 phones</h2>
+    <p>Choose the phones you want to compare.</p>
+
+    <div class="compare-phone-options">
+      {% for phone in available_phones %}
+        <label class="compare-phone-option">
+          <input
+            type="checkbox"
+            name="phone_ids"
+            value="{{ phone.pk }}"
+            {% if phone.pk|stringformat:"s" in selected_ids %}checked{% endif %}
+          >
+          <span>
+            <strong>{{ phone.brand }} {{ phone.model_name }}</strong>
+          </span>
+        </label>
+      {% empty %}
+        <p>No active phones are available in the catalogue yet.</p>
+      {% endfor %}
+    </div>
+
+    {% if error %}
+      <p class="compare-error">{{ error }}</p>
+    {% endif %}
+
+    <button type="submit" class="button button-primary">
+      Compare selected phones →
+    </button>
+  </form>
+
+  {% if comparison_rows %}
+    <div class="compare-intro">
+      <h2>Your comparison</h2>
+      <p>
+        Missing specifications are marked “Not available”.
+        Prices shown are launch-price references, not current selling prices.
+      </p>
+    </div>
+
+    <div class="compare-table-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th scope="col">Specification</th>
+            {% for phone in selected_phones %}
+              <th scope="col">
+                <span class="compare-brand">{{ phone.brand }}</span>
+                <span class="compare-model">{{ phone.model_name }}</span>
+              </th>
+            {% endfor %}
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for row in comparison_rows %}
+            <tr>
+              <th scope="row">{{ row.label }}</th>
+              {% for value in row.values %}
+                <td>{{ value }}</td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <p class="compare-disclaimer">
+      Compare specifications before deciding. Actual performance, camera
+      quality and battery life can vary with software, settings and usage.
+      Verify important specifications and current prices with official
+      sources before purchasing.
+    </p>
+
+  {% elif not error %}
+    <div class="compare-empty">
+      <h2>Your comparison starts here</h2>
+      <p>
+        Select at least three phones above and click
+        “Compare selected phones” to see their specifications side by side.
+      </p>
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}

@@ -1,0 +1,2 @@
+brand,model_name,launch_date,launch_price_inr,display_size_inches,battery_mah,ram_gb,storage_gb,variant_launch_price_inr,processor,processor_manufacturer,ram_type,storage_type,colour,model_number,source_name,source_url,verified_at
+EXAMPLE,Example Phone,2026-01-01,29999,6.5,5000,8,256,29999,Example Chip,Example Maker,LPDDR5,UFS 3.1,Black,EX-001,Example Source,https://example.com,2026-01-01
